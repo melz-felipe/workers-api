@@ -6,6 +6,12 @@ export const getCompanyById = async (companyId: string) => {
   return company;
 };
 
+export const getCompanyBySubdomain = async (subdomain: string) => {
+  const company = await Company.findOne({ subdomain });
+
+  return company;
+};
+
 export const getAllCompanies = async (page: number, limit: number) => {
   const companies = await Company.find();
   const total = companies.length;

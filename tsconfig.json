@@ -18,7 +18,8 @@
       "@controllers/*": ["./src/controllers/*"],
       "@database/*": ["./src/database/*"],
       "@middlewares/*": ["./src/middlewares/*"],
-      "@types/*": ["./src/types/*"]
+      "@types/*": ["./src/types/*"],
+      "@validators/*": ["./src/validators/*"]
     }
   }
 }

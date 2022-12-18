@@ -5,11 +5,13 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 import { companyRouter } from "@routes/company";
+import { userRouter } from "@routes/user";
 
 const app = express();
 
 app.use(json());
 app.use(companyRouter);
+app.use(userRouter);
 
 const PORT = process.env.PORT || 3000;
 
