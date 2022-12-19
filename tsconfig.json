@@ -19,7 +19,8 @@
       "@database/*": ["./src/database/*"],
       "@middlewares/*": ["./src/middlewares/*"],
       "@types/*": ["./src/types/*"],
-      "@validators/*": ["./src/validators/*"]
+      "@validators/*": ["./src/validators/*"],
+      "@utils/*": ["./src/utils/*"],
     }
   }
 }
