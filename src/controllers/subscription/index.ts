@@ -13,14 +13,28 @@ export const createSubscription = async (req: Request, res: Response) => {
       return res.status(400).send({ error: "Missing company id" });
     }
 
-    const { serviceId, userId, selectedOptions, selectedSliders } = req.body;
+    const {
+      serviceId,
+      userId,
+      addressId,
+      selectedOptions,
+      selectedSliders,
+      recurrency,
+      startDate,
+    } = req.body;
+
+    const parsedStartDate = new Date(startDate);
+    parsedStartDate.setHours(0, 0, 0, 0);
 
     const subscription = await createSubscriptionService(
       serviceId,
       companyId.toString(),
       userId,
+      addressId,
       selectedOptions,
-      selectedSliders
+      selectedSliders,
+      recurrency,
+      parsedStartDate
     );
     return res.status(201).send(subscription);
   } catch (error: unknown) {

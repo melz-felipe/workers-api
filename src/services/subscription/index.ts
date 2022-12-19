@@ -1,8 +1,10 @@
 import { Subscription, ISubscription } from "@models/subcription";
+import { IAppointment } from "@models/appointment";
 
 import { getServiceById } from "@services/service";
 import { createSubscriptionService } from "@services/subscriptionService";
 import { calculateSubscriptionPrice } from "@services/pricing";
+import { createAppointment } from "@services/appointment";
 
 import {
   ISelectedOptions,
@@ -14,8 +16,11 @@ export const createSubscription = async (
   serviceId: string,
   companyId: string,
   userId: string,
+  addressId: string,
   selectedOptions: ISelectedOptions[] = [],
-  selectedSliders: ISelectedSliders[] = []
+  selectedSliders: ISelectedSliders[] = [],
+  recurrency: ISubscription["recurrency"] = [],
+  startDate: ISubscription["startDate"] = new Date()
 ) => {
   const service = await getServiceById(serviceId);
 
@@ -53,14 +58,19 @@ export const createSubscription = async (
     serviceId: serviceId as unknown as ISubscription["serviceId"],
     companyId: companyId as unknown as ISubscription["companyId"],
     userId: userId as unknown as ISubscription["userId"],
+    addressId: addressId as unknown as ISubscription["addressId"],
     subscriptionServiceId:
       subscriptionService._id as unknown as ISubscription["subscriptionServiceId"],
     active: true,
     pricing: subscriptionPricing,
+    recurrency,
+    startDate,
   };
 
   const newSubscription = new Subscription(subscriptionBody);
   await newSubscription.save();
+
+  createSubscriptionAppointments(newSubscription._id.toString());
 
   return newSubscription;
 };
@@ -90,4 +100,42 @@ export const getSubscriptions = async (
     totalPages,
     total,
   };
+};
+
+export const createSubscriptionAppointments = async (
+  subscriptionId: string
+) => {
+  const subscription = await getSubscriptionById(subscriptionId);
+
+  if (!subscription) {
+    throw new Error("Subscription not found");
+  }
+
+  const { startDate, recurrency } = subscription;
+
+  const appointmentDates = recurrency.map((recurrency) => {
+    const { dayIndex, hour: recurrencyHour } = recurrency;
+    const appointmentDate = new Date(startDate);
+
+    appointmentDate.setDate(appointmentDate.getDate() + dayIndex);
+
+    const [hour, minute, second] = recurrencyHour.split(":").map(Number);
+
+    appointmentDate.setHours(hour, minute, second, 0);
+
+    return appointmentDate;
+  });
+
+  appointmentDates.forEach(async (appointmentDate) => {
+    await createAppointment({
+      subscriptionId:
+        subscriptionId as unknown as IAppointment["subscriptionId"],
+      companyId: subscription.companyId as unknown as IAppointment["companyId"],
+      userId: subscription.userId as unknown as IAppointment["userId"],
+      addressId: subscription.addressId as unknown as IAppointment["addressId"],
+      date: appointmentDate,
+      pricing: subscription.pricing,
+      workerIds: [],
+    });
+  });
 };

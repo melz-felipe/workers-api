@@ -1,9 +1,13 @@
 import { User, IUser } from "@models/user";
 
-interface ICreateUser extends Omit<IUser, "companyId" | 'role'> {}
+interface ICreateUser extends Omit<IUser, "companyId" | "role"> {}
 
-export const createUser = async (user: ICreateUser, role: IUser['role'], companyId: IUser["companyId"]) => {
-  const userBody = {...user, role, companyId};
+export const createUser = async (
+  user: ICreateUser,
+  role: IUser["role"],
+  companyId: IUser["companyId"]
+) => {
+  const userBody = { ...user, role, companyId };
 
   const newUser = new User(userBody);
   await newUser.save();
@@ -46,4 +50,9 @@ export const getAllUsers = async (
     total,
     totalPages,
   };
+};
+
+export const getAllWorkersForCompanyId = async (companyId: string) => {
+  const users = await User.find({ role: "worker", companyId });
+  return users;
 };
