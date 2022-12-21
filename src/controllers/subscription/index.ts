@@ -4,6 +4,7 @@ import {
   createSubscription as createSubscriptionService,
   getSubscriptionById as getSubscriptionByIdService,
   getSubscriptions as getAllSubscriptionsService,
+  getSubscriptionsByUserId as getSubscriptionsByUserIdService,
 } from "@services/subscription";
 
 export const createSubscription = async (req: Request, res: Response) => {
@@ -80,6 +81,17 @@ export const getAllSubscriptions = async (req: Request, res: Response) => {
       await getAllSubscriptionsService(page, limit, filterParams);
 
     return res.status(200).send({ subscriptions, total, totalPages });
+  } catch (error: unknown) {
+    console.error(error);
+    return res.status(500).send({ error: "Internal Server Error" });
+  }
+};
+
+export const getSubscriptionsByUserId = async (req: Request, res: Response) => {
+  try {
+    const userId = req.params.userId;
+    const subscriptions = await getSubscriptionsByUserIdService(userId);
+    return res.status(200).send(subscriptions);
   } catch (error: unknown) {
     console.error(error);
     return res.status(500).send({ error: "Internal Server Error" });

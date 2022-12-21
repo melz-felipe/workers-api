@@ -5,6 +5,8 @@ import {
   getDateAppointmentsByCompanyId as getDateAppointmentsByCompanyIdService,
   assignWorkerToAppointment as assignWorkerToAppointmentService,
   unassignWorkerFromAppointment as unassignWorkerFromAppointmentService,
+  getAppointmentsByUserId as getAppointmentsByUserIdService,
+  getAppointmentById as getAppointmentByIdService,
 } from "@services/appointment";
 
 export const getDateAppointmentsByCompanyId = async (
@@ -62,6 +64,35 @@ export const unassignWorkerFromAppointment = async (
       workerId
     );
 
+    return res.status(200).send(appointment);
+  } catch (error: unknown) {
+    console.error(error);
+    return res.status(500).send({ error: "Internal Server Error" });
+  }
+};
+
+export const getAppointmentsByUserId = async (req: Request, res: Response) => {
+  try {
+    const userId = req.params.userId;
+    if (!userId) {
+      return res.status(400).send({ error: "Missing user id" });
+    }
+
+    const appointments = await getAppointmentsByUserIdService(
+      userId.toString()
+    );
+    return res.status(200).send(appointments);
+  } catch (error: unknown) {
+    console.error(error);
+    return res.status(500).send({ error: "Internal Server Error" });
+  }
+};
+
+export const getAppointmentById = async (req: Request, res: Response) => {
+  try {
+    const appointment = await getAppointmentByIdService(req.params.id);
+    if (!appointment)
+      return res.status(404).send({ error: "Appointment not found" });
     return res.status(200).send(appointment);
   } catch (error: unknown) {
     console.error(error);

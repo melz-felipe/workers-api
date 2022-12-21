@@ -48,3 +48,15 @@ export const createCompany = async (req: Request, res: Response) => {
     return res.status(500).send({ error: "Internal Server Error" });
   }
 };
+
+export const getCompanyBySubdomain = async (req: Request, res: Response) => {
+  try {
+    const company = await getCompanyById((req.companyId || "").toString());
+    return res.status(200).send(company);
+  } catch (error: unknown) {
+    if (error instanceof Error.DocumentNotFoundError) {
+      return res.status(404).send({ error: error.message });
+    }
+    return res.status(500).send({ error: "Internal Server Error" });
+  }
+};

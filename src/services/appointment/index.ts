@@ -91,3 +91,19 @@ export const unassignWorkerFromAppointment = async (
     workerIds: newWorkerIds,
   });
 };
+
+export const getAppointmentsByUserId = async (userId: string) => {
+  const appointments = await Appointment.find({
+    userId,
+  }).populate(["addressId", "workerIds"]).sort({ date: -1 });
+
+  return appointments;
+};
+
+export const getAppointmentsByWorkerId = async (workerId: string) => {
+  const appointments = await Appointment.find({
+    workerIds: workerId,
+  });
+
+  return appointments;
+};

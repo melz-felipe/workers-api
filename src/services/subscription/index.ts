@@ -139,3 +139,11 @@ export const createSubscriptionAppointments = async (
     });
   });
 };
+
+export const getSubscriptionsByUserId = async (userId: string) => {
+  const subscriptions = await Subscription.find({
+    userId: userId as unknown as ISubscription["userId"],
+  }).populate(["subscriptionServiceId", "addressId"]).sort({ startDate: -1 });
+
+  return subscriptions;
+};

@@ -1,6 +1,7 @@
 import express from "express";
 import { json } from "body-parser";
 import * as dotenv from "dotenv";
+import cors from 'cors';
 
 dotenv.config();
 
@@ -12,6 +13,8 @@ import { addressRouter } from "@routes/address";
 import { appointmentRouter } from "@routes/appointment";
 
 const app = express();
+
+app.use(cors());
 
 app.use(json());
 

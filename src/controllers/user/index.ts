@@ -7,6 +7,7 @@ import {
   getAllUsers as getAllUsersService,
   getUserByEmail,
   getAllWorkersForCompanyId as getAllWorkersForCompanyIdService,
+  getAllCustomersForCompanyId as getAllCustomersForCompanyIdService,
 } from "@services/user";
 import { IUser } from "@models/user";
 
@@ -70,6 +71,27 @@ export const getAllWorkersForCompanyId = async (
     );
 
     return res.status(200).send(workers);
+  } catch (error: unknown) {
+    console.error(error);
+    return res.status(500).send({ error: "Internal Server Error" });
+  }
+};
+
+export const getAllCustomersForCompanyId = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const companyId = req.companyId;
+    if (!companyId) {
+      return res.status(400).send({ error: "Missing company id" });
+    }
+
+    const customers = await getAllCustomersForCompanyIdService(
+      companyId.toString()
+    );
+
+    return res.status(200).send(customers);
   } catch (error: unknown) {
     console.error(error);
     return res.status(500).send({ error: "Internal Server Error" });

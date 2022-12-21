@@ -56,3 +56,8 @@ export const getAllWorkersForCompanyId = async (companyId: string) => {
   const users = await User.find({ role: "worker", companyId });
   return users;
 };
+
+export const getAllCustomersForCompanyId = async (companyId: string) => {
+  const users = await User.find({ role: "customer", companyId });
+  return users;
+};
